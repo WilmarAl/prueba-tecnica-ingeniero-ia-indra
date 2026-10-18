@@ -109,9 +109,9 @@ def build_excel_cost_model(xlsx_path: Path) -> None:
     _auto_adjust_columns(ws1)
 
     # =========================================================================
-    # HOJA 2: 2_Costos_Cloud_Azure_1_Estacion
+    # HOJA 2: 2_Costos_Azure_1_Estacion
     # =========================================================================
-    ws2 = wb.create_sheet("2_Costos_Cloud_Azure_1_Estacion")
+    ws2 = wb.create_sheet("2_Costos_Azure_1_Estacion")
     ws2["A1"] = "DESGLOSE FINOPS DE ARQUITECTURA HÍBRIDA EDGE + AZURE CLOUD (1 ESTACIÓN PRODUCTIVA)"
     ws2.merge_cells("A1:G1")
     _style_header_Range(ws2, "A1:G1", "0284C7")
@@ -255,9 +255,9 @@ def build_excel_cost_model(xlsx_path: Path) -> None:
     _auto_adjust_columns(ws2)
 
     # =========================================================================
-    # HOJA 3: 3_Escalamiento_1_a_10_Estaciones
+    # HOJA 3: 3_Escalamiento_1_a_10_Est
     # =========================================================================
-    ws3 = wb.create_sheet("3_Escalamiento_1_a_10_Estaciones")
+    ws3 = wb.create_sheet("3_Escalamiento_1_a_10_Est")
     ws3["A1"] = "ECONOMÍA DE ESCALA FINOPS: ESCALAMIENTO DE 1 A 10 ESTACIONES DE INSPECCIÓN"
     ws3.merge_cells("A1:F1")
     _style_header_Range(ws3, "A1:F1", "0284C7")
@@ -459,7 +459,7 @@ def build_excel_cost_model(xlsx_path: Path) -> None:
         (
             "4. Infraestructura Cloud Azure (OPEX Mensual — Hoja 2)",
             0.00,
-            "='2_Costos_Cloud_Azure_1_Estacion'!F14",
+            "='2_Costos_Azure_1_Estacion'!F14",
             "=B7-C7",
             "=D7*12",
             "Incluye Azure OpenAI, AI Search, Container Apps, PostgreSQL, Redis, IoT Hub y MLOps.",

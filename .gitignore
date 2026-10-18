@@ -220,15 +220,15 @@ __marimo__/
 .streamlit/secrets.toml
 
 # Project Specific Data & Artifacts (Keep structure & final deliverables, ignore raw dataset)
-data/raw/*
-!data/raw/.gitkeep
+data/raw/
 data/processed/*
-!data/processed/.gitkeep
+!data/processed/*.json
 *.sqlite
 *.db
 logs/
 .wrangler/
 tools/
 cloudflare/worker.js
+
 
 

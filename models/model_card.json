@@ -1,0 +1,177 @@
+{
+  "model_name": "COIL100-Classical-Hybrid-PickPack",
+  "model_version": "v1.0.0",
+  "owner": "Equipo de Ingeniería de IA — Planta Pick & Pack",
+  "intended_use": {
+    "primary_purpose": "Identificación determinística de SKU (100 clases), estimación continua de ángulo de rotación en [0°, 360°) con incertidumbre asociada y recuperación de vistas similares para guiar el agarre de un brazo robótico en línea de empaque 24/5.",
+    "target_environment": "Inferencia local en borde (Edge CPU en planta) con latencia < 25 ms por imagen.",
+    "decision_gate": "El robot solo ejecuta PICK_AND_ROTATE cuando `safe_for_robot_grasp == True` (objeto en distribución, confianza calibrada >= umbral y sigma_theta <= 10.0°). En caso contrario se activa DIVERT_TO_HUMAN_INSPECTION."
+  },
+  "training_and_evaluation_data": {
+    "name": "COIL-100 (Columbia Object Image Library)",
+    "total_images": 7200,
+    "n_objects": 100,
+    "views_per_object": 72,
+    "angle_step_deg": 5,
+    "resolution": "128x128 RGB",
+    "sha256_fingerprint": "23d32ed9cef522b7",
+    "feature_dimension": 2080,
+    "feature_extraction_ms_per_image": 11.439,
+    "n_highly_symmetric_objects_180deg": 19,
+    "highly_symmetric_object_ids": [
+      1,
+      12,
+      25,
+      33,
+      34,
+      35,
+      47,
+      50,
+      56,
+      58,
+      64,
+      66,
+      67,
+      84,
+      88,
+      94,
+      95,
+      96,
+      98
+    ]
+  },
+  "methodology": {
+    "feature_extraction": "Pipeline clásico multimodal: HOG (9 orientaciones, celdas 8x8) + Histogramas HSV globales en máscara de objeto + Pirámide espacial de color 4x4 + Firma azimutal en 36 sectores angulares + Momentos geométricos e inercia cromática.",
+    "classification": "Fusión probabilística calibrada (SVM-RBF + Logistic Regression L2 en espacio PCA + k-NN coseno).",
+    "angle_estimation": "Regresión circular sobre el círculo unitario (sin θ, cos θ) combinando Ridge por clase e interpolación baricéntrica exponencial de vistas vecinas con incertidumbre circular R.",
+    "ood_and_rejection": "Puntaje compuesto de similitud coseno al prototipo más cercano y margen probabilístico, calibrado exclusivamente sobre particiones internas de validación."
+  },
+  "metrics_by_protocol": {
+    "A": {
+      "classification_accuracy": 0.9978,
+      "angle_mae_deg": 2.897,
+      "angle_median_ae_deg": 1.753,
+      "angle_rmse_deg": 7.551,
+      "angle_mae_sym180_deg": 2.691,
+      "within_robot_tolerance_10deg_rate": 0.9608,
+      "within_15deg_rate": 0.9808,
+      "joint_class_and_10deg_rate": 0.9594,
+      "accepted_coverage": 0.7286,
+      "accepted_classification_accuracy": 1.0,
+      "accepted_angle_mae_deg": 1.819,
+      "accepted_safe_grasp_rate": 0.9996,
+      "unsafe_robot_action_rate": 0.0004,
+      "mean_confidence": 0.8475,
+      "mean_angle_uncertainty_deg": 8.604,
+      "inference_ms_per_sample": 13.028,
+      "model_only_ms_per_sample": 1.589,
+      "n_train_views": 3600,
+      "n_test_views": 3600
+    },
+    "B": {
+      "classification_accuracy": 0.9292,
+      "angle_mae_deg": 68.422,
+      "angle_median_ae_deg": 27.161,
+      "angle_rmse_deg": 98.18,
+      "angle_mae_sym180_deg": 18.962,
+      "within_robot_tolerance_10deg_rate": 0.2483,
+      "within_15deg_rate": 0.3508,
+      "joint_class_and_10deg_rate": 0.2108,
+      "accepted_coverage": 0.195,
+      "accepted_classification_accuracy": 1.0,
+      "accepted_angle_mae_deg": 28.03,
+      "accepted_safe_grasp_rate": 0.5855,
+      "unsafe_robot_action_rate": 0.4145,
+      "mean_confidence": 0.7424,
+      "mean_angle_uncertainty_deg": 26.871,
+      "inference_ms_per_sample": 13.543,
+      "model_only_ms_per_sample": 2.104,
+      "n_train_views": 6000,
+      "n_test_views": 1200
+    },
+    "C": {
+      "classification_accuracy": 0.9825,
+      "angle_mae_deg": 9.501,
+      "angle_median_ae_deg": 5.928,
+      "angle_rmse_deg": 21.119,
+      "angle_mae_sym180_deg": 7.709,
+      "within_robot_tolerance_10deg_rate": 0.7983,
+      "within_15deg_rate": 0.921,
+      "joint_class_and_10deg_rate": 0.7962,
+      "accepted_coverage": 0.4657,
+      "accepted_classification_accuracy": 1.0,
+      "accepted_angle_mae_deg": 5.735,
+      "accepted_safe_grasp_rate": 0.927,
+      "unsafe_robot_action_rate": 0.073,
+      "mean_confidence": 0.7419,
+      "mean_angle_uncertainty_deg": 15.81,
+      "inference_ms_per_sample": 12.248,
+      "model_only_ms_per_sample": 0.809,
+      "n_train_views": 1200,
+      "n_test_views": 6000
+    },
+    "D": {
+      "n_known_objects_train": 90,
+      "n_unknown_objects_test": 10,
+      "unknown_object_ids": [
+        19,
+        22,
+        28,
+        34,
+        43,
+        51,
+        57,
+        60,
+        72,
+        93
+      ],
+      "ood_auroc": 0.9984,
+      "ood_detection_rate_tpr": 1.0,
+      "ood_precision": 0.8759,
+      "ood_f1_score": 0.9339,
+      "false_rejection_rate_on_known": 0.0472,
+      "known_objects_classification_accuracy": 0.9968,
+      "known_objects_angle_mae_deg": 2.839,
+      "calibrated_composite_threshold": 0.7833
+    }
+  },
+  "modern_reference_tradeoff": {
+    "protocol": "A",
+    "baseline_simple": {
+      "model_name": "0. Baseline Simple (Basic Patch/Color 1-NN)",
+      "family": "Baseline",
+      "val_accuracy": 0.9383,
+      "test_accuracy": 0.9939,
+      "train_time_ms": 0.9,
+      "inference_ms_per_sample": 0.01
+    },
+    "classical_selected": {
+      "model_name": "Sistema Clásico Híbrido (HOG+HSV+Azimuth + SVM/LR/Manifold Circular)",
+      "test_accuracy": 0.9978,
+      "angle_mae_deg": 2.897,
+      "within_robot_tolerance_10deg_rate": 0.9608,
+      "inference_ms_per_sample": 13.028,
+      "artifact_size_mb": 61.57
+    },
+    "modern_deep_reference": {
+      "model_name": "4. Referencia Moderna: MobileNetV3-Small (Pretrained Backbone + Circular Head)",
+      "family": "Deep Learning Reference",
+      "test_accuracy": 1.0,
+      "angle_mae_deg": 4.83,
+      "within_robot_tolerance_10deg_rate": 0.8847,
+      "inference_ms_per_sample": 3.34,
+      "head_fit_time_ms": 637.6,
+      "approx_artifact_size_mb": 10.2
+    }
+  },
+  "known_limitations": [
+    "Ambigüedad intrínseca de 180° en objetos con simetría rotacional pura (cilindros, tazas o envases sin etiqueta frontal diferenciada).",
+    "Degradación esperada en extrapolación de sectores ciegos amplios (Protocolo B: 60° sin ninguna vista de referencia) cuando la geometría del envase cambia abruptamente.",
+    "Sensibilidad a variaciones extremas de iluminación, oclusiones parciales o desenfoque por movimiento (mitigado por el guardrail óptico de varianza del Laplaciano antes de inferir)."
+  ],
+  "out_of_scope_and_prohibited_uses": [
+    "No debe utilizarse sin la compuerta determinística de incertidumbre (`safe_for_robot_grasp`) activada.",
+    "No debe operarse con cámaras no cenitales o con múltiples objetos traslapados en el mismo recorte sin un detector de cajas delimitadoras previo.",
+    "No debe modificarse el umbral de rechazo en producción sin aprobación humana explícita auditada."
+  ]
+}

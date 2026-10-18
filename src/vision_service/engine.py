@@ -405,7 +405,8 @@ class VisionInferenceEngine:
             if n_views >= 12 and max_gap <= 35.0:
                 cv_mae = min(cv_mae, 6.4)
             # Separabilidad frente a las clases existentes en la memoria del modelo
-            foreign_sims = np.max(np.dot(X_norm, self.model.ref_features_norm.T), axis=1)
+            dists_f, _ = self.model.nn_index.kneighbors(X_norm, n_neighbors=1)
+            foreign_sims = 1.0 - dists_f[:, 0]
             self_sims = [
                 float(np.max(np.dot(X_norm[np.arange(len(X_norm)) != i], X_norm[i])))
                 for i in range(len(X_norm))
