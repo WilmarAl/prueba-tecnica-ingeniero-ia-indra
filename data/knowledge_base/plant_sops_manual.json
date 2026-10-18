@@ -1,0 +1,42 @@
+[
+  {
+    "doc_id": "SOP-OPT-04",
+    "title": "Procedimiento Estándar de Calibración Óptica e Iluminación Anular LED en Estaciones Pick & Pack",
+    "section": "Sección 3.2 — Deriva Lumínica Nocturna y Desenfoque por Movimiento",
+    "Target_Roles": ["maintenance", "quality", "supervisor"],
+    "keywords": ["iluminación", "led", "cámara", "rechazos", "3 a.m.", "3 am", "noche", "turno 1", "turno 2", "blur", "desenfoque", "laplaciano", "brillo", "lente"],
+    "content": "Cuando la tasa de rechazos por baja confianza o fallo óptico supera el 6% (especialmente entre las 02:00 y 04:00 a.m. por caída de tensión o deriva térmica del driver PWM del anillo LED), el equipo de mantenimiento debe: (1) Verificar el bus de corriente del anillo LED cenital (nominal: 24V DC ± 2%, intensidad >= 95%); (2) Limpiar el filtro polarizador de la cámara con alcohol isopropílico si la varianza del Laplaciano cae por debajo de 35.0; (3) Comprobar que el tiempo de exposición del obturador global esté fijado en 1.2 ms para evitar motion blur a velocidad nominal de banda (0.8 m/s)."
+  },
+  {
+    "doc_id": "SOP-ROB-11",
+    "title": "Manual de Diagnóstico y Recuperación ante Agarres Fallidos del Brazo Robótico (Pick & Pack)",
+    "section": "Sección 4.1 — Tolerancia Angular (±10°), Vacío de Ventosa y Desalineación de Pinza",
+    "Target_Roles": ["maintenance", "supervisor"],
+    "keywords": ["agarre", "fallido", "robot", "brazo", "pinza", "ventosa", "vacío", "presión", "ángulo", "10 grados", "tolerancia", "colisión", "parada", "plc", "mantenimiento"],
+    "content": "Ante dos o más agarres fallidos consecutivos en la estación de empaque: (1) Recopilar el código de error del PLC, la incertidumbre angular estimada (sigma_theta) del último frame y la presión de vacío del circuito neumático (nominal: -65 kPa a -80 kPa); (2) Si sigma_theta <= 10.0° pero el agarre falla, inspeccionar desgaste de ventosa de silicona o holgura mecánica en el servomotor del eje J6 (recalibrar cero mecánico si la desviación supera ±1.5°); (3) Si el objeto es cilíndrico o presenta simetría rotacional de 180° (ej. SKU-001, SKU-012, SKU-025), activar el perfil de agarre simétrico dual en el controlador PLC; (4) Abrir o escalar ticket de mantenimiento preventivo si la desviación persiste tras recalibración."
+  },
+  {
+    "doc_id": "SOP-QUAL-02",
+    "title": "Protocolo de Gestión de Excepciones, Cola de Revisión Humana y Reentrenamiento Controlado",
+    "section": "Sección 2.4 — Etiquetado Confirmado por Humano y Gobierno de Umbrales",
+    "Target_Roles": ["supervisor", "quality", "ml_engineer"],
+    "keywords": ["cola", "revisión", "humana", "rechazo", "baja confianza", "etiqueta", "reentrenamiento", "umbral", "staging", "calidad"],
+    "content": "Todo objeto cuya confianza de clase sea inferior al umbral activo (0.65-0.70), cuya similitud OOD sea menor a 0.6666 o cuya incertidumbre angular supere ±10.0° es desviado automáticamente al carril de inspección sin detener la banda principal. El Supervisor de Turno o Inspector de Calidad debe revisar la imagen junto con las Top-K vistas similares de referencia, confirmar el código SKU verdadero y el ángulo real en [0°, 360°), y enviarlo al lote de reentrenamiento (`staging`). Queda prohibido reducir el umbral de confianza en producción sin aprobación humana explícita registrada con token de auditoría."
+  },
+  {
+    "doc_id": "SOP-ML-07",
+    "title": "Estándar de Incorporación (Onboarding) de Nuevos Productos (SKUs) al Sistema de Visión",
+    "section": "Sección 5.1 — Requisitos de Captura en Plataforma Giratoria y Validación Sandbox",
+    "Target_Roles": ["ml_engineer", "quality", "supervisor"],
+    "keywords": ["nuevo", "producto", "sku", "alta", "vistas", "sandbox", "cobertura", "sector ciego", "promover", "producción"],
+    "content": "Para incorporar un nuevo SKU al catálogo productivo sin degradar la precisión de línea: (1) Se requiere un mínimo absoluto de 12 vistas uniformemente espaciadas cada 30° (Protocolo C), recomendándose 18 a 36 vistas (cada 10°-20°); (2) Ningún sector ciego contiguo puede superar los 35° (según el Protocolo B, sectores ciegos de 60° elevan el error angular por encima de la tolerancia de ±10° del robot); (3) En el entorno controlado (Sandbox), el nuevo SKU debe alcanzar Accuracy CV >= 95.0% y MAE angular <= 10.0°; (4) La promoción final del modelo o SKU a producción es una operación crítica que exige solicitud formal y aprobación humana explícita (HITL)."
+  },
+  {
+    "doc_id": "MAN-NET-09",
+    "title": "Procedimiento de Contingencia ante Fallos 5xx o Timeouts del Servicio de Inferencia de Visión",
+    "section": "Sección 1.3 — Degradación Segura (Fail-Safe) y Reconexión de Bus de Cámara",
+    "Target_Roles": ["maintenance", "supervisor", "ml_engineer"],
+    "keywords": ["500", "503", "504", "timeout", "error", "caído", "servicio", "visión", "contingencia", "latencia"],
+    "content": "Si el microservicio de inferencia de visión responde con HTTP 503 (Service Unavailable) o HTTP 504 (Timeout > SLA de 50 ms): (1) El controlador PLC conmuta automáticamente la estación a modo `SAFE_HOLD / DIVERT_ALL` evitando que el robot actúe a ciegas; (2) El Copiloto Agéntico nunca debe inventar ni extrapolar predicciones por cuenta propia cuando la tool de visión falla; debe reportar el código de error exacto, ejecutar diagnóstico de salud de cámara/PLC (`diagnose_camera_and_plc_health`) y abrir un ticket de prioridad ALTA/CRÍTICA citando [MAN-NET-09, Sec. 1.3]."
+  }
+]
