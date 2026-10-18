@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "indra-ai-vision-pickpack"
+version = "1.0.0"
+description = "Sistema de Visión Clásica y Copiloto Agéntico para Línea de Pick & Pack Robótico (COIL-100)"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Candidato AI Engineer Senior+" }
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
